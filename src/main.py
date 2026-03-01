@@ -3,22 +3,23 @@ import time
 import random
 from playwright.sync_api import sync_playwright
 
-# Import our custom modules
 from database.db_manager import initialize_db, save_to_db
 from scrapers.zara_scraper import extract_zara_data
+from utils.logger import setup_logger
 
 URLS_FILE = os.path.join("input", "urls_zara.txt")
 
 def run():
-    print("🚀 Starting Scraping Engine (Modular Architecture)...")
+    logger = setup_logger()
+    logger.info("🚀 Starting Scraping Engine (Modular Architecture)...")
     
     # 1. Read URLs
     try:
         with open(URLS_FILE, "r") as f:
             urls = [line.strip() for line in f.readlines() if line.strip()]
-        print(f"📄 Successfully loaded {len(urls)} URLs from {URLS_FILE}.")
+        logger.info(f"📄 Successfully loaded {len(urls)} URLs from {URLS_FILE}.")
     except FileNotFoundError:
-        print(f"❌ Error: File '{URLS_FILE}' not found.")
+        logger.info(f"❌ Error: File '{URLS_FILE}' not found.")
         return
 
     # 2. Initialize Database
@@ -26,7 +27,7 @@ def run():
     
     # 3. Initialize Playwright
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0"
         )
