@@ -3,35 +3,36 @@ import sqlite3
 from datetime import datetime
 import os
 
-# Ruta dinámica a la carpeta data (asumiendo que ejecutamos desde la raíz del proyecto)
+# Dynamic route
 DB_PATH = os.path.join("data", "tracker.db")
 
-def inicializar_db():
-    """Crea la base de datos SQLite y la tabla si no existen."""
-    # Nos aseguramos de que la carpeta 'data' exista
+def initialize_db():
+    """Creates the SQLite database and table if they do not exist."""
     os.makedirs("data", exist_ok=True)
     
     conexion = sqlite3.connect(DB_PATH)
     cursor = conexion.cursor()
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS historial_precios (
+        CREATE TABLE IF NOT EXISTS price_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            producto TEXT,
-            precio REAL,
-            fecha TEXT,
+            product TEXT,
+            price REAL,
+            date TEXT,
             url TEXT
         )
     ''')
+
     conexion.commit()
     return conexion
 
-def guardar_en_db(conexion, producto, precio, url):
-    """Persiste los datos en la tabla relacional."""
-    cursor = conexion.cursor()
-    fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+def save_to_db(connection, product, price, url):
+    """Persists the mathematical data in the relational table."""
+    cursor = connection.cursor()
+    current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     cursor.execute('''
-        INSERT INTO historial_precios (producto, precio, fecha, url)
+        INSERT INTO price_history (product, price, date, url)
         VALUES (?, ?, ?, ?)
-    ''', (producto, precio, fecha_actual, url))
-    conexion.commit()
+    ''', (product, price, current_date, url))
+    connection.commit()
+    
